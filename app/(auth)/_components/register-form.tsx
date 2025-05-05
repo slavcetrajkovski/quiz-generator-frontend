@@ -39,26 +39,26 @@ export const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+  const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
     setError("");
     setSuccess("");
 
-    startTransition(async () => {
-      try {
-        const { token } = await register(
-          values.username,
-          values.email,
-          values.password
-        );
-        setSuccess("Успешна регистрација");
-        setTimeout(() => {
-          redirect("/login");
-        }, 2000);
-      } catch (error: any) {
-        setError(error.message);
-      }
-    });
+    try {
+      const { token } = await register(
+        values.username,
+        values.email,
+        values.password
+      );
+      setSuccess("Успешна регистрација");
+      setTimeout(() => {
+        redirect("/login");
+      }, 2000);
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
+
+  const { isSubmitting, isValid } = form.formState;
 
   return (
     <CardWrapper
@@ -131,12 +131,7 @@ export const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="*****"
-                      type="password"
-                    />
+                    <Input {...field} placeholder="*****" type="password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,8 +142,8 @@ export const RegisterForm = () => {
           <FormError message={error} />
           <Button
             variant="pink"
-            disabled={isPending}
             type="submit"
+            disabled={!isValid || isSubmitting}
             className="w-full"
           >
             Create Account

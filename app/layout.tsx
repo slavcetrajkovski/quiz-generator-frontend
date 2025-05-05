@@ -1,5 +1,6 @@
 import Sidebar from "@/components/sidebar";
 import "./globals.css";
+import ToastProvider from "@/components/providers/ToastProvider";
 
 export default function RootLayout({
   children,
@@ -9,9 +10,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <ToastProvider />
         <Sidebar />
         {children}
-        </body>
+      </body>
     </html>
   );
 }

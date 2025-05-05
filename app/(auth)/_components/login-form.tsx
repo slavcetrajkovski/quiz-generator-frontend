@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { LoginSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { login } from "@/service/authentication-service";
 import { redirect } from "next/navigation";
 import { CardWrapper } from "./card-wrapper";
@@ -24,7 +24,6 @@ import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
 
 export const LoginForm = () => {
-  const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
@@ -36,23 +35,23 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+  const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
     setError("");
     setSuccess("");
 
-    startTransition(async () => {
-      try {
-        const { token } = await login(values.username, values.password);
-        setSuccess("Успешна најава");
+    try {
+      const { token } = await login(values.username, values.password);
+      setSuccess("Успешна најава");
 
-        setTimeout(() => {
-          redirect("/");
-        }, 2000);
-      } catch (error: any) {
-        setError(error.message);
-      }
-    });
+      setTimeout(() => {
+        redirect("/");
+      }, 2000);
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
+
+  const { isSubmitting, isValid } = form.formState;
 
   return (
     <CardWrapper
@@ -71,11 +70,7 @@ export const LoginForm = () => {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="johndoe24"
-                    />
+                    <Input {...field} placeholder="johndoe24" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -88,12 +83,7 @@ export const LoginForm = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="*****"
-                      type="password"
-                    />
+                    <Input {...field} placeholder="*****" type="password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -104,7 +94,7 @@ export const LoginForm = () => {
           <FormError message={error} />
           <Button
             variant="blue"
-            disabled={isPending}
+            disabled={!isValid || isSubmitting}
             type="submit"
             className="w-full"
           >
