@@ -34,3 +34,12 @@ export const RegisterSchema = z
     message: "Лозинките не се совпаѓаат",
     path: ["confirmPassword"],
   });
+
+export const QuizSchema = z.object({
+  title: z.string().min(1, {
+    message: "Насловот е задолжителен",
+  }),
+  pdf: z.instanceof(File).refine((file) => file.type === "application/pdf", {
+    message: "Само PDF датотеки се дозволени.",
+  }),
+});
