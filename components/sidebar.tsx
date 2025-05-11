@@ -3,10 +3,11 @@
 
 import Link from "next/link";
 import { Menu } from "lucide-react";
-import { usePathname } from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
+import { isAuthenticated } from "@/service/authentication-service";
 
 const navRoutes = [
   { name: "Dashboard", path: "/dashboard" },
@@ -17,6 +18,14 @@ const navRoutes = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleProfileClick = (e: React.MouseEvent, path: string) => {
+    if (path === "/profile" && !isAuthenticated()) {
+      e.preventDefault();
+      router.push("/login");
+    }
+  };
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
@@ -43,6 +52,7 @@ export default function Sidebar() {
                   <Link
                     key={route.path}
                     href={route.path}
+                    onClick={(e) => handleProfileClick(e, route.path)}
                     className={cn(
                       "block px-4 py-2 rounded-md text-lg hover:bg-blue-100 transition",
                       pathname === route.path
@@ -64,6 +74,7 @@ export default function Sidebar() {
             <Link
               key={route.path}
               href={route.path}
+              onClick={(e) => handleProfileClick(e, route.path)}
               className={cn(
                 "text-lg hover:text-blue-600 transition-colors",
                 pathname === route.path
