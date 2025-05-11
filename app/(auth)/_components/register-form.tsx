@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
 import { useState, useTransition } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { register } from "@/service/authentication-service";
 import {
   Form,
@@ -28,6 +28,7 @@ export const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -42,20 +43,21 @@ export const RegisterForm = () => {
   const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
     setError("");
     setSuccess("");
-
-    try {
-      const { token } = await register(
-        values.username,
-        values.email,
-        values.password
-      );
-      setSuccess("Успешна регистрација");
-      setTimeout(() => {
-        redirect("/login");
-      }, 2000);
-    } catch (error: any) {
-      setError(error.message);
-    }
+    startTransition(async () => {
+        try {
+            const { token } = await register(
+                values.username,
+                values.email,
+                values.password
+            );
+            setSuccess("Успешна регистрација");
+            setTimeout(() => {
+                router.push("/login");
+                }, 2000);
+        } catch (error: any) {
+            setError(error.message);
+        }
+    });
   };
 
   const { isSubmitting, isValid } = form.formState;
