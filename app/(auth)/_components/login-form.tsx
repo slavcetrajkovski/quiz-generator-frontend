@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useState } from "react";
 import { login } from "@/service/authentication-service";
-import { redirect } from "next/navigation";
+import {redirect, useRouter} from "next/navigation";
 import { CardWrapper } from "./card-wrapper";
 import {
   Form,
@@ -26,6 +26,7 @@ import { FormSuccess } from "./form-success";
 export const LoginForm = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -44,7 +45,7 @@ export const LoginForm = () => {
       setSuccess("Успешна најава");
 
       setTimeout(() => {
-        redirect("/");
+        router.push("/");
       }, 2000);
     } catch (error: any) {
       setError(error.message);
