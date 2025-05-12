@@ -1,4 +1,3 @@
-// components/sidebar.tsx
 "use client";
 
 import Link from "next/link";
@@ -11,7 +10,7 @@ import { isAuthenticated } from "@/service/authentication-service";
 
 const navRoutes = [
   { name: "Dashboard", path: "/dashboard" },
-  { name: "My Quizzes", path: "/quizes" },
+  { name: "My Quizzes", path: "/quiz/all" },
   { name: "Create Quiz", path: "/quiz/create" },
   { name: "Profile", path: "/profile" },
 ];
@@ -34,7 +33,6 @@ export default function Sidebar() {
           Quizzy
         </Link>
 
-        {/* Mobile Trigger */}
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
@@ -68,7 +66,6 @@ export default function Sidebar() {
           </Sheet>
         </div>
 
-        {/* Desktop Sidebar */}
         <nav className="hidden md:flex space-x-8">
           {navRoutes.map((route) => (
             <Link

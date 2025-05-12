@@ -2,6 +2,7 @@ export type Quiz = {
     id: number;
     title: string;
     document: Document;
+    questions: Question[];
 }
 
 export type Document = {
@@ -11,7 +12,7 @@ export type Document = {
 }
 
 export type Question = {
-    question_id?: number;
+    id: number;
     questionType: QuestionType;
     questionText: string;
     answers: string[];

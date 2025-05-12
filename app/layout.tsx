@@ -1,6 +1,7 @@
 import Sidebar from "@/components/sidebar";
 import "./globals.css";
 import ToastProvider from "@/components/providers/ToastProvider";
+import { ConfettiProvider } from "@/components/providers/confetti-provider";
 
 export default function RootLayout({
   children,
@@ -10,6 +11,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <ConfettiProvider />
         <ToastProvider />
         <Sidebar />
         {children}
