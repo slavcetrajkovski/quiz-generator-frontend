@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useState } from "react";
 import { login } from "@/service/authentication-service";
-import {redirect, useRouter} from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { CardWrapper } from "./card-wrapper";
 import {
   Form,
@@ -31,7 +31,7 @@ export const LoginForm = () => {
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -41,7 +41,8 @@ export const LoginForm = () => {
     setSuccess("");
 
     try {
-      const { token } = await login(values.username, values.password);
+      const { token } = await login(values.email, values.password);
+      localStorage.setItem("token", token);
       setSuccess("Успешна најава");
 
       setTimeout(() => {
@@ -66,12 +67,16 @@ export const LoginForm = () => {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="johndoe24" />
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="johndoe24@example.com"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

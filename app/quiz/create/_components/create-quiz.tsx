@@ -23,23 +23,22 @@ import toast from "react-hot-toast";
 import { createQuiz } from "@/service/quiz-service";
 
 const CreateQuiz = () => {
-  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof QuizSchema>>({
     resolver: zodResolver(QuizSchema),
     defaultValues: {
       title: "",
-      pdf: undefined,
+      file: undefined,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof QuizSchema>) => {
     console.log(values);
     try {
-      const params = { title: values.title, pdf: values.pdf };
+      const params = { title: values.title, file: values.file };
       const quiz = await createQuiz(params);
-      router.push(`/quiz/${quiz.id}`);
+      router.push(`/quiz/preview/${quiz.id}`);
       toast.success("Квизот е успешно креиран");
       router.refresh();
     } catch (error: any) {
@@ -72,7 +71,7 @@ const CreateQuiz = () => {
             />
             <FormField
               control={form.control}
-              name="pdf"
+              name="file"
               render={({ field }) => (
                 <FileUpload field={field} label="Upload PDF" />
               )}

@@ -3,19 +3,18 @@ import { Quiz } from "@/model";
 
 export const createQuiz = async (params: {
   title: string;
-  pdf: File;
+  file: File;
 }): Promise<Quiz> => {
   try {
     const token = localStorage.getItem("token");
 
     const formData = new FormData();
     formData.append("title", params.title);
-    formData.append("pdf", params.pdf);
+    formData.append("file", params.file);
 
     const response = await axiosInstance.post("/quiz/create", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
       },
     });
 

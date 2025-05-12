@@ -1,10 +1,5 @@
 import { axiosInstance } from "@/config";
 
-// Helper function for token management
-const storeToken = (token: string) => {
-  localStorage.setItem("token", token);
-};
-
 export const login = async (
     email: string,
     password: string
@@ -15,7 +10,6 @@ export const login = async (
       password,
     });
 
-    storeToken(response.data.token);
     return response.data;
   } catch (error: any) {
     throw new Error(
@@ -25,18 +19,17 @@ export const login = async (
 };
 
 export const register = async (
-    fullName: string,
+    name: string,
     email: string,
     password: string
 ): Promise<{ token: string }> => {
   try {
     const response = await axiosInstance.post("/auth/register", {
-      fullName,
+      name,
       email,
       password,
     });
 
-    storeToken(response.data.token);
     return response.data;
   } catch (error: any) {
     throw new Error(

@@ -33,7 +33,7 @@ export const RegisterForm = () => {
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -44,27 +44,28 @@ export const RegisterForm = () => {
     setError("");
     setSuccess("");
     startTransition(async () => {
-        try {
-            const { token } = await register(
-                values.username,
-                values.email,
-                values.password
-            );
-            setSuccess("Успешна регистрација");
-            setTimeout(() => {
-                router.push("/login");
-                }, 2000);
-        } catch (error: any) {
-            setError(error.message);
-        }
+      try {
+        const { token } = await register(
+          values.name,
+          values.email,
+          values.password
+        );
+        localStorage.setItem("token", token);
+        setSuccess("Успешна регистрација");
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      } catch (error: any) {
+        setError(error.message);
+      }
     });
   };
 
-  const { isSubmitting, isValid } = form.formState;
+  const { isSubmitting } = form.formState;
 
   return (
     <CardWrapper
-      headerLabel="Sign up"
+      headerLabel="Register"
       headerText="Create your account"
       backButtonLabel="Already have an account? Sign in!"
       backButtonHref="/login"
@@ -74,15 +75,15 @@ export const RegisterForm = () => {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="username"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Full name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="johdoe24"
+                      placeholder="John Doe"
                     />
                   </FormControl>
                   <FormMessage />
@@ -145,7 +146,7 @@ export const RegisterForm = () => {
           <Button
             variant="pink"
             type="submit"
-            disabled={!isValid || isSubmitting}
+            disabled={isSubmitting}
             className="w-full"
           >
             Create Account

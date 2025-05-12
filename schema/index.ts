@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const LoginSchema = z.object({
-  username: z.string().email({
+  email: z.string().email({
     message: "Емеил адресата е задолжителна",
   }),
   password: z.string().min(1, {
@@ -11,7 +11,7 @@ export const LoginSchema = z.object({
 
 export const RegisterSchema = z
   .object({
-    username: z.string().min(1, {
+    name: z.string().min(1, {
       message: "Името е задолжително",
     }),
     email: z.string().email({
@@ -39,7 +39,7 @@ export const QuizSchema = z.object({
   title: z.string().min(1, {
     message: "Насловот е задолжителен",
   }),
-  pdf: z.instanceof(File).refine((file) => file.type === "application/pdf", {
+  file: z.instanceof(File).refine((file) => file.type === "application/pdf", {
     message: "Само PDF датотеки се дозволени.",
   }),
 });
