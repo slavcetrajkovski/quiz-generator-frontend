@@ -41,3 +41,22 @@ export const findQuizById = async (id: number): Promise<Quiz> => {
     throw new Error(error.response?.data?.message || "Квизот не постои");
   }
 };
+
+export const getAllQuizzesByUser = async (): Promise<Quiz[]> => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axiosInstance.get("/quiz/all/user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message ||
+        "Не се пронајдени квизови за тој корисник"
+    );
+  }
+};

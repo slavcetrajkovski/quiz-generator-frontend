@@ -24,3 +24,12 @@ export type Question = {
   TRUE_FALSE = "TRUE_FALSE",
   SHORT_ANSWER = "SHORT_ANSWER"
 }
+
+export type UserQuizResults = {
+  id: number;
+  quiz: Quiz;
+  scorePercentage: number;
+  submittedAt: string;
+  feedback: string[];
+  timeTakenMillis: number;
+}

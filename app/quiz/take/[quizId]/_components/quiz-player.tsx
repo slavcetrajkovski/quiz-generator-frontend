@@ -7,20 +7,33 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import QuestionStep from "./question-step";
 import ProgressBar from "./progress-bar";
+import { useRouter } from "next/navigation";
+import { submitQuizResults } from "@/service/quiz-results-service";
 
-export default function QuizPlayer({ quiz }: { quiz: Quiz }) {
+interface QuizPlayerProps {
+  quiz: Quiz;
+}
+
+export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<(string | null)[]>(
     Array(quiz.questions.length).fill(null)
   );
   const [timeLeft, setTimeLeft] = useState(300);
   const [quizFinished, setQuizFinished] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    setStartTime(Date.now());
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timer);
+          handleSubmit();
           setQuizFinished(true);
         }
         return prevTime - 1;
@@ -41,6 +54,26 @@ export default function QuizPlayer({ quiz }: { quiz: Quiz }) {
       setCurrent(current + 1);
     } else {
       setQuizFinished(true);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!startTime) return;
+
+    const userAnswers: Record<number, string> = {};
+    quiz.questions.forEach((q, i) => {
+      if (answers[i]) {
+        userAnswers[q.id] = answers[i]!;
+      }
+    });
+
+    const timeTaken = Date.now() - startTime;
+
+    try {
+      const result = await submitQuizResults(quiz.id, userAnswers, timeTaken);
+      router.push(`/quiz/results/${result.id}`);
+    } catch (error) {
+      console.error("Error submitting quiz:", error);
     }
   };
 
@@ -94,9 +127,13 @@ export default function QuizPlayer({ quiz }: { quiz: Quiz }) {
 
       <div className="flex justify-end mt-6">
         {current === quiz.questions.length - 1 ? (
-          <Link href={`/quiz/results/${quiz.id}`}>
-            <Button variant="pink">Finish Quiz</Button>
-          </Link>
+          <Button
+            onClick={handleSubmit}
+            variant="pink"
+            disabled={!answers[current]}
+          >
+            Finish Quiz
+          </Button>
         ) : (
           <Button
             onClick={handleNext}
