@@ -1,4 +1,5 @@
 import { axiosInstance } from "@/config";
+import axios from "axios";
 
 export const login = async (
     email: string,
@@ -9,6 +10,7 @@ export const login = async (
       email,
       password,
     });
+    localStorage.setItem("token", response.data.token);
 
     return response.data;
   } catch (error: any) {
@@ -22,28 +24,36 @@ export const register = async (
     name: string,
     email: string,
     password: string
-): Promise<{ token: string }> => {
+) => {
   try {
-    const response = await axiosInstance.post("/auth/register", {
+    const registerInstance = axios.create({
+      baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const response = await registerInstance.post("/auth/register", {
       name,
       email,
-      password,
+      password
     });
 
     return response.data;
   } catch (error: any) {
-    throw new Error(
-        error.response?.data?.message || "Невалиден обид за регистрација"
-    );
+    console.error("Registration error details:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      config: error.config
+    });
+    throw new Error(error.response?.data?.message || "Registration failed");
   }
 };
 
-// Function to check auth status
 export const isAuthenticated = (): boolean => {
   return !!localStorage.getItem("token");
 };
 
-// To clear token on logout
 export const logout = (): void => {
   localStorage.removeItem("token");
 };
