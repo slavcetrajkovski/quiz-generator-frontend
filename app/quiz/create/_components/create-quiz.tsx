@@ -38,11 +38,10 @@ const CreateQuiz = () => {
     try {
       const params = { title: values.title, file: values.file };
       const quiz = await createQuiz(params);
+      toast.success("Quiz has been sucessfully created");
       router.push(`/quiz/preview/${quiz.id}`);
-      toast.success("Квизот е успешно креиран");
-      router.refresh();
     } catch (error: any) {
-      toast.error("Грешка при креирање на квизот");
+      toast.error("Something went wrong during the creation of the quiz");
     }
   };
 
