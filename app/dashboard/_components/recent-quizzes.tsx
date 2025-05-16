@@ -1,22 +1,33 @@
-import { Quiz } from "../_services/quiz-service";
+import { DashboardQuiz } from "../_services/quiz-service";
 import QuizCard from "./quiz-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { Spinner } from "@/components/ui/spinner";
 
-export default function RecentQuizzes({ quizzes }: { quizzes: Quiz[] }) {
-    const router = useRouter();
+export default function RecentQuizzes({
+                                          quizzes,
+                                          loading,
+                                          error
+                                      }: {
+    quizzes: DashboardQuiz[];
+    loading: boolean;
+    error: string | null;
+}) {
 
-    const handleAuthAction = (href: string) => {
-        return (e: React.MouseEvent) => {
-            if (quizzes.length === 0) {
-                e.preventDefault();
-                toast.error("Please login first");
-                router.push("/login");
-            }
-        };
-    };
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <Spinner />
+            </div>
+        );
+    }
+    if (error) {
+        return (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 mb-8">
+                За креирање и преглед на квизови мора да се најавите!
+            </div>
+        );
+    }
 
     return (
         <>
@@ -32,14 +43,11 @@ export default function RecentQuizzes({ quizzes }: { quizzes: Quiz[] }) {
             {quizzes.length === 0 ? (
                 <div className="bg-card rounded-lg border p-8 text-center">
                     <p className="text-muted-foreground mb-4">
-                        {quizzes.length === 0 ? "Please login to see your quizzes" : "You haven't created any quizzes yet"}
+                        You haven't created any quizzes yet
                     </p>
                     <Button asChild>
-                        <Link
-                            href="/quiz/create"
-                            onClick={handleAuthAction("/quiz/create")}
-                        >
-                            {quizzes.length === 0 ? "Login Now" : "Create Your First Quiz"}
+                        <Link href="/quiz/create">
+                            Create Your First Quiz
                         </Link>
                     </Button>
                 </div>

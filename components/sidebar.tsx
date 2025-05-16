@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, LogOut } from "lucide-react";
+import { Menu, LogOut, LogIn } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
@@ -29,7 +29,6 @@ export default function Sidebar() {
   const handleProfileClick = (e: React.MouseEvent, path: string) => {
     if ((path === "/profile" || path === "/quiz/create") && !isLoggedIn) {
       e.preventDefault();
-      toast.error("Please login first");
       router.push("/login");
     }
   };
@@ -38,10 +37,10 @@ export default function Sidebar() {
     try {
       await logout();
       setIsLoggedIn(false);
-      toast.success("Logged out successfully");
+      toast.success("Успешно одјавено!");
       router.push("/login");
     } catch (error) {
-      toast.error("Logout failed");
+      toast.error("Одјавувањето е неуспешно");
     }
   };
 
@@ -70,7 +69,7 @@ export default function Sidebar() {
                     {route.name}
                   </Link>
               ))}
-              {isLoggedIn && (
+              {isLoggedIn ? (
                   <Button
                       variant="ghost"
                       onClick={handleLogout}
@@ -78,6 +77,15 @@ export default function Sidebar() {
                   >
                     <LogOut className="w-5 h-5" />
                     <span>Logout</span>
+                  </Button>
+              ) : (
+                  <Button
+                      variant="ghost"
+                      onClick={() => router.push("/login")}
+                      className="text-gray-700 hover:text-blue-600 flex items-center gap-2"
+                  >
+                    <LogIn className="w-5 h-5" />
+                    <span>Login</span>
                   </Button>
               )}
             </nav>
@@ -111,7 +119,7 @@ export default function Sidebar() {
                           {route.name}
                         </Link>
                     ))}
-                    {isLoggedIn && (
+                    {isLoggedIn ? (
                         <Button
                             variant="ghost"
                             onClick={handleLogout}
@@ -119,6 +127,15 @@ export default function Sidebar() {
                         >
                           <LogOut className="mr-2 h-5 w-5" />
                           Logout
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="ghost"
+                            onClick={() => router.push("/login")}
+                            className="w-full justify-start px-4 py-2 text-lg text-blue-600 hover:bg-blue-50"
+                        >
+                          <LogIn className="mr-2 h-5 w-5" />
+                          Login
                         </Button>
                     )}
                   </nav>

@@ -1,15 +1,50 @@
-export interface Quiz {
+import { axiosInstance } from "@/config";
+import { Quiz } from "@/model";
+
+export interface DashboardQuiz {
     id: number;
     title: string;
-    createdAt: string;
     questionCount: number;
 }
 
-export const fetchRecentQuizzes = async (): Promise<Quiz[]> => {
-    await new Promise(resolve => setTimeout(resolve, 500));
+export const deleteQuiz = async (quizId: number): Promise<void> => {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No authentication token found");
 
-    return [
-        { id: 1, title: "JavaScript Basics", createdAt: "2025-04-15T10:30:00Z", questionCount: 10 },
-        { id: 2, title: "Intro to AI", createdAt: "2025-05-20T14:45:00Z", questionCount: 8 },
-    ];
+        await axiosInstance.delete(`/quiz/${quizId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+    } catch (error: any) {
+        throw new Error(
+            error.response?.data?.message || "Не може да се избрише квизот"
+        );
+    }
+};
+
+export const fetchRecentQuizzes = async (): Promise<DashboardQuiz[]> => {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            return [];
+        }
+
+        const response = await axiosInstance.get<Quiz[]>("/quiz/all/user", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response.data.map((quiz) => ({
+            id: quiz.id,
+            title: quiz.title,
+            questionCount: quiz.questions?.length || 0,
+        }));
+    } catch (error) {
+        return [];
+    }
 };
