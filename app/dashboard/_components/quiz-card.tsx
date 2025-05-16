@@ -48,16 +48,6 @@ export default function QuizCard({ quiz }: { quiz: DashboardQuiz }) {
                 <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-8 p-0 rounded-full bg-white/90 hover:bg-yellow-50 hover:text-yellow-600 shadow-sm"
-                    asChild
-                >
-                    <Link href={`/quiz/edit/${quiz.id}`} title="Edit">
-                        <Pencil className="h-4 w-4" />
-                    </Link>
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="sm"
                     className="h-8 w-8 p-0 rounded-full hover:bg-red-50 hover:text-red-600"
                     onClick={(e) => {
                         e.preventDefault();
