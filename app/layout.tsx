@@ -2,7 +2,7 @@ import Sidebar from "@/components/sidebar";
 import "./globals.css";
 import ToastProvider from "@/components/providers/ToastProvider";
 import { ConfettiProvider } from "@/components/providers/confetti-provider";
-import AuthChecker from "@/components/AuthChecker";
+import AuthProvider from "@/components/providers/auth-provider";
 
 export default function RootLayout({
                                        children,
@@ -14,7 +14,7 @@ export default function RootLayout({
         <body>
         <ConfettiProvider />
         <ToastProvider />
-        <AuthChecker />
+        <AuthProvider />
         <Sidebar />
         {children}
         </body>

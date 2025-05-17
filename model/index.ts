@@ -24,3 +24,17 @@ export type Question = {
   TRUE_FALSE = "TRUE_FALSE",
   SHORT_ANSWER = "SHORT_ANSWER"
 }
+
+export type User = {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    createdAt: string;
+}
+
+export type DashboardQuiz = {
+    id: number;
+    title: string;
+    questionCount: number;
+}

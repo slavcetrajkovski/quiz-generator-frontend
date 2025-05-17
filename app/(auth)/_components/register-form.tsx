@@ -51,7 +51,7 @@ export const RegisterForm = () => {
           values.password
         );
         localStorage.setItem("token", token);
-        setSuccess("Успешна регистрација");
+        setSuccess("Registration has been successful");
         setTimeout(() => {
           router.push("/login");
         }, 2000);

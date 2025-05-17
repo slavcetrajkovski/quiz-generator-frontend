@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, LogOut, LogIn } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
 import { Button } from "./ui/button";
 import { isAuthenticated, logout } from "@/service/authentication-service";
 import { useEffect, useState } from "react";
@@ -26,124 +32,101 @@ export default function Sidebar() {
     setIsLoggedIn(isAuthenticated());
   }, [pathname]);
 
-  const handleProfileClick = (e: React.MouseEvent, path: string) => {
-    if ((path === "/profile" || path === "/quiz/create") && !isLoggedIn) {
-      e.preventDefault();
-      router.push("/login");
-    }
-  };
-
   const handleLogout = async () => {
     try {
-      await logout();
+      logout();
       setIsLoggedIn(false);
-      toast.success("Успешно одјавено!");
+      toast.success("Successfuly logged out!");
       router.push("/login");
     } catch (error) {
-      toast.error("Одјавувањето е неуспешно");
+      toast.error("Logout unsuccessful");
     }
   };
 
   return (
-      <header className="bg-white shadow-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-blue-600">
-            Quizzy
-          </Link>
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <Link href="/" className="text-2xl font-bold text-blue-600">
+          Quizzy
+        </Link>
 
-          <div className="flex items-center gap-4">
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
-              {navRoutes.map((route) => (
-                  <Link
+        <div className="flex items-center gap-4">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
+            {navRoutes.map((route) => (
+              <Link
+                key={route.path}
+                href={route.path}
+                className={cn(
+                  "text-lg hover:text-blue-600 transition-colors",
+                  pathname === route.path
+                    ? "text-blue-600 font-semibold"
+                    : "text-gray-700"
+                )}
+              >
+                {route.name}
+              </Link>
+            ))}
+            {isLoggedIn && (
+              <Button
+                variant="ghost"
+                onClick={handleLogout}
+                className="text-gray-700 hover:text-red-600 flex items-center gap-2"
+              >
+                <LogOut className="w-5 h-5" />
+                <span>Logout</span>
+              </Button>
+            )}
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="text-gray-700 hover:text-blue-600 transition"
+                >
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+
+                <nav className="mt-8 space-y-4">
+                  {navRoutes.map((route) => (
+                    <Link
                       key={route.path}
                       href={route.path}
-                      onClick={(e) => handleProfileClick(e, route.path)}
                       className={cn(
-                          "text-lg hover:text-blue-600 transition-colors",
-                          pathname === route.path
-                              ? "text-blue-600 font-semibold"
-                              : "text-gray-700"
+                        "block px-4 py-2 rounded-md text-lg hover:bg-blue-100 transition",
+                        pathname === route.path
+                          ? "bg-blue-100 text-blue-600 font-semibold"
+                          : "text-gray-700"
                       )}
-                  >
-                    {route.name}
-                  </Link>
-              ))}
-              {isLoggedIn ? (
-                  <Button
+                    >
+                      {route.name}
+                    </Link>
+                  ))}
+                  {isLoggedIn && (
+                    <Button
                       variant="ghost"
                       onClick={handleLogout}
-                      className="text-gray-700 hover:text-red-600 flex items-center gap-2"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    <span>Logout</span>
-                  </Button>
-              ) : (
-                  <Button
-                      variant="ghost"
-                      onClick={() => router.push("/login")}
-                      className="text-gray-700 hover:text-blue-600 flex items-center gap-2"
-                  >
-                    <LogIn className="w-5 h-5" />
-                    <span>Login</span>
-                  </Button>
-              )}
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" className="text-gray-700 hover:text-blue-600 transition">
-                    <Menu className="w-6 h-6" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-64">
-                  <SheetHeader>
-                    <SheetTitle>Menu</SheetTitle>
-                  </SheetHeader>
-
-                  <nav className="mt-8 space-y-4">
-                    {navRoutes.map((route) => (
-                        <Link
-                            key={route.path}
-                            href={route.path}
-                            onClick={(e) => handleProfileClick(e, route.path)}
-                            className={cn(
-                                "block px-4 py-2 rounded-md text-lg hover:bg-blue-100 transition",
-                                pathname === route.path
-                                    ? "bg-blue-100 text-blue-600 font-semibold"
-                                    : "text-gray-700"
-                            )}
-                        >
-                          {route.name}
-                        </Link>
-                    ))}
-                    {isLoggedIn ? (
-                        <Button
-                            variant="ghost"
-                            onClick={handleLogout}
-                            className="w-full justify-start px-4 py-2 text-lg text-red-600 hover:bg-red-50"
-                        >
-                          <LogOut className="mr-2 h-5 w-5" />
-                          Logout
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="ghost"
-                            onClick={() => router.push("/login")}
-                            className="w-full justify-start px-4 py-2 text-lg text-blue-600 hover:bg-blue-50"
-                        >
-                          <LogIn className="mr-2 h-5 w-5" />
-                          Login
-                        </Button>
-                    )}
-                  </nav>
-                </SheetContent>
-              </Sheet>
-            </div>
+                      className={cn(
+                        "text-lg hover:text-blue-600 transition-colors"
+                      )}
+                    >
+                      Logout
+                    </Button>
+                  )}
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
-      </header>
+      </div>
+    </header>
   );
 }
