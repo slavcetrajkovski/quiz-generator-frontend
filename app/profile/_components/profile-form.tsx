@@ -1,27 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {UserDTO, getCurrentUser, updateUser,} from "../_services/user-service";
-
+import { UserDTO, getCurrentUser, updateUser } from "../_services/user-service";
 import { toast } from "react-hot-toast";
 
 export const ProfileForm = () => {
     const [user, setUser] = useState<UserDTO | null>(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
-    const [form, setForm] = useState({ name: "", email: "" });
+    const [form, setForm] = useState({ name: "", email: "", role: "USER" });
 
     useEffect(() => {
         getCurrentUser()
             .then((u) => {
                 setUser(u);
-                setForm({ name: u.name, email: u.email });
+                setForm({ name: u.name, email: u.email, role: u.role });
             })
             .catch(() => toast.error("Failed to load profile"))
             .finally(() => setLoading(false));
     }, []);
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
         setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
     const onSubmit = async (e: React.FormEvent) => {
@@ -34,7 +33,8 @@ export const ProfileForm = () => {
             const updatedUser = {
                 ...currentUser,
                 name: form.name,
-                email: form.email
+                email: form.email,
+                role: form.role
             };
 
             const updated = await updateUser(user.id, updatedUser);
@@ -55,7 +55,6 @@ export const ProfileForm = () => {
         );
 
     return (
-
         <div className="max-w-2xl mx-auto bg-card rounded-lg shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">Profile Information</h1>
@@ -67,7 +66,6 @@ export const ProfileForm = () => {
                         Edit Profile
                     </button>
                 )}
-
             </div>
 
             {editing ? (
@@ -93,12 +91,26 @@ export const ProfileForm = () => {
                             required
                         />
                     </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Role</label>
+                        <select
+                            name="role"
+                            value={form.role}
+                            onChange={onChange}
+                            className="w-full px-3 py-2 border rounded-md"
+                            required
+                        >
+                            <option value="PROFESSOR">Professor</option>
+                            <option value="STUDENT">Student</option>
+                            <option value="USER">User</option>
+                        </select>
+                    </div>
                     <div className="flex justify-end space-x-4">
                         <button
                             type="button"
                             onClick={() => {
                                 setEditing(false);
-                                setForm({ name: user.name, email: user.email });
+                                setForm({ name: user.name, email: user.email, role: user.role });
                             }}
                             className="px-4 py-2 border rounded-md hover:bg-accent/10"
                         >
