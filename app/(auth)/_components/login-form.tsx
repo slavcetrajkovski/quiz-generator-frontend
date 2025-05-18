@@ -43,7 +43,7 @@ export const LoginForm = () => {
     try {
       const { token } = await login(values.email, values.password);
       localStorage.setItem("token", token);
-      setSuccess("Успешна најава");
+      setSuccess("You have been logged in successfuly!");
 
       setTimeout(() => {
         router.push("/");

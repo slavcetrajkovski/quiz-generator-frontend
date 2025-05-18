@@ -2,44 +2,49 @@ import * as z from "zod";
 
 export const LoginSchema = z.object({
   email: z.string().email({
-    message: "Емеил адресата е задолжителна",
+    message: "Email address is",
   }),
   password: z.string().min(1, {
-    message: "Лозинката е задолжителна",
+    message: "Password is required",
   }),
 });
 
 export const RegisterSchema = z
   .object({
     name: z.string().min(1, {
-      message: "Името е задолжително",
+      message: "Name is required",
     }),
     email: z.string().email({
-      message: "Емеил адресата е задолжителна и мора да биде валидна",
+      message: "Email address is required and must be valid",
     }),
     password: z
       .string()
       .min(8, {
-        message: "Лозинката мора да содржи минимум 8 карактери",
+        message: "Password must contain at least 8 characters",
       })
       .regex(/[A-Z]/, {
-        message: "Лозинката мора да содржи барем една голема буква",
+        message: "Password must contain at least one uppercase letter",
       })
       .regex(/[!@#$%^&*(),.?":{}|<>]/, {
-        message: "Лозинката мора да содржи барем еден специјален знак",
+        message: "Password must contain at least one special character",
       }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Лозинките не се совпаѓаат",
+    message: "Passwords don't match",
     path: ["confirmPassword"],
   });
 
 export const QuizSchema = z.object({
   title: z.string().min(1, {
-    message: "Насловот е задолжителен",
+    message: "Title is required",
   }),
   file: z.instanceof(File).refine((file) => file.type === "application/pdf", {
-    message: "Само PDF датотеки се дозволени.",
+    message: "Only PDF files are allowed",
   }),
+});
+
+export const ProfileSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
 });

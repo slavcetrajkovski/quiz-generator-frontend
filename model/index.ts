@@ -25,6 +25,20 @@ export type Question = {
   SHORT_ANSWER = "SHORT_ANSWER"
 }
 
+export type User = {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    createdAt: string;
+}
+
+export type DashboardQuiz = {
+    id: number;
+    title: string;
+    questionCount: number;
+}
+
 export type UserQuizResults = {
   id: number;
   quiz: Quiz;
