@@ -125,26 +125,12 @@ const QuizQuestions = ({ quizId }: QuizQuestionsProps) => {
                   <label className="block font-medium mb-1">
                     Question Type
                   </label>
-                  <Select
-                    value={q.questionType}
-                    onValueChange={(val) =>
-                      handleChange(qIdx, "questionType", val)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(QuestionType).map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type
-                            .replace("_", " ")
-                            .toLowerCase()
-                            .replace(/\b\w/g, (c) => c.toUpperCase())}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <p className="bg-gray-100 px-3 py-2 rounded text-sm text-gray-700">
+                    {q.questionType
+                      .replace("_", " ")
+                      .toLowerCase()
+                      .replace(/\b\w/g, (c) => c.toUpperCase())}
+                  </p>
                 </div>
 
                 <label className="block font-medium mb-2">Answers</label>
