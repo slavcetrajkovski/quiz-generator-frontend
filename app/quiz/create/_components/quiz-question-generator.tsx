@@ -147,32 +147,26 @@ const QuizQuestions = ({ quizId }: QuizQuestionsProps) => {
                   </Select>
                 </div>
 
-                {q.questionType === "MULTIPLE_CHOICE" && (
-                  <>
-                    <label className="block font-medium mb-2">Answers</label>
-                    {q.answers.map((ans, aIdx) => (
-                      <Input
-                        key={aIdx}
-                        value={ans}
-                        onChange={(e) =>
-                          handleAnswerChange(qIdx, aIdx, e.target.value)
-                        }
-                        className="mb-2"
-                        placeholder={`Answer ${aIdx + 1}`}
-                      />
-                    ))}
-                    <label className="block font-medium mb-1">
-                      Correct Answer
-                    </label>
-                    <Input
-                      value={q.correctAnswer}
-                      onChange={(e) =>
-                        handleChange(qIdx, "correctAnswer", e.target.value)
-                      }
-                      placeholder="Type the correct answer"
-                    />
-                  </>
-                )}
+                <label className="block font-medium mb-2">Answers</label>
+                {q.answers.map((ans, aIdx) => (
+                  <Input
+                    key={aIdx}
+                    value={ans}
+                    onChange={(e) =>
+                      handleAnswerChange(qIdx, aIdx, e.target.value)
+                    }
+                    className="mb-2"
+                    placeholder={`Answer ${aIdx + 1}`}
+                  />
+                ))}
+                <label className="block font-medium mb-1">Correct Answer</label>
+                <Input
+                  value={q.correctAnswer}
+                  onChange={(e) =>
+                    handleChange(qIdx, "correctAnswer", e.target.value)
+                  }
+                  placeholder="Type the correct answer"
+                />
               </div>
             ))}
           </div>

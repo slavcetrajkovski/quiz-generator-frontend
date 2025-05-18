@@ -8,12 +8,15 @@ import RecentQuizzes from "./_components/recent-quizzes";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { User } from "@/model";
+import { DashboardQuiz, User, UserQuizResults } from "@/model";
 import { fetchRecentQuizzes } from "@/service/quiz-service";
+import QuizResults from "./_components/quiz-results";
+import { getResutlsForUserQuizzes } from "@/service/quiz-results-service";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [quizzes, setQuizzes] = useState<DashboardQuiz[]>([]);
+  const [results, setResults] = useState<UserQuizResults[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [authChecked, setAuthChecked] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,23 +33,15 @@ export default function DashboardPage() {
         setAuthChecked(true);
 
         if (userData) {
-          try {
-            const quizzesData = await fetchRecentQuizzes();
-            setQuizzes(quizzesData.slice(0, 3));
-          } catch (error: unknown) {
-            let errorMessage = "Failed to load quizzes";
-            if (error instanceof Error) {
-              errorMessage = error.message;
-            }
-            setError(errorMessage);
-          }
+          const [quizzesData, resultsData] = await Promise.all([
+            fetchRecentQuizzes(),
+            getResutlsForUserQuizzes(),
+          ]);
+          setQuizzes(quizzesData.slice(0, 3));
+          setResults(resultsData);
         }
-      } catch (error: unknown) {
-        let errorMessage = "Please login to access your dashboard";
-        if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        setError(errorMessage);
+      } catch (error: any) {
+        setError("Please login to access your dashboard");
       } finally {
         setLoading(false);
       }
@@ -78,19 +73,18 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container flex flex-col gap-5 mx-auto px-4 py-8">
       <WelcomeSection name={user?.name} />
       <RecentQuizzes
         quizzes={quizzes}
         loading={loading && authChecked}
         error={error}
       />
+      <QuizResults
+        results={results}
+        loading={loading && authChecked}
+        error={error}
+      />
     </div>
   );
-}
-
-interface DashboardQuiz {
-  id: number;
-  title: string;
-  questionCount: number;
 }

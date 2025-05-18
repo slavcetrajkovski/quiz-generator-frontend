@@ -3,9 +3,8 @@
 import * as z from "zod";
 import { QuizSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useTransition } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useDropzone } from "react-dropzone";
 import {
   Form,
   FormControl,
@@ -21,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { createQuiz } from "@/service/quiz-service";
+import { getCurrentUser } from "@/service/user-service";
 
 const CreateQuiz = () => {
   const router = useRouter();
@@ -32,6 +32,22 @@ const CreateQuiz = () => {
       file: undefined,
     },
   });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const u = await getCurrentUser();
+        if (!u) {
+          router.push("/login");
+        }
+      } catch (error) {
+        toast.error("You must be logged in.");
+        router.push("/login");
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const onSubmit = async (values: z.infer<typeof QuizSchema>) => {
     console.log(values);

@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { User } from "@/model";
 import { ProfileSchema } from "@/schema";
 import { Spinner } from "@/components/ui/spinner";
+import { useRouter } from "next/navigation";
 
 type ProfileFormData = z.infer<typeof ProfileSchema>;
 
@@ -27,6 +28,7 @@ export const ProfileForm = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
+  const router = useRouter();
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(ProfileSchema),
@@ -37,14 +39,21 @@ export const ProfileForm = () => {
   });
 
   useEffect(() => {
-    getCurrentUser()
-      .then((u) => {
+    const fetchUser = async () => {
+      try {
+        const u = await getCurrentUser();
         setUser(u);
         form.reset({ name: u.name, email: u.email });
-      })
-      .catch(() => toast.error("Failed to load profile"))
-      .finally(() => setLoading(false));
-  }, [form]);
+      } catch (error) {
+        toast.error("You must be logged in.");
+        router.push("/login");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [form, router]);
 
   const onSubmit = async (values: ProfileFormData) => {
     if (!user) return;

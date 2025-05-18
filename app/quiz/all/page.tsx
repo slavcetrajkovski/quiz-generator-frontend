@@ -7,6 +7,8 @@ import QuizIntro from "./_components/quiz-intro";
 import { AnimatePresence, motion } from "framer-motion";
 import { Spinner } from "@/components/ui/spinner";
 import { getAllQuizzesByUser } from "@/service/quiz-service";
+import { getCurrentUser } from "@/service/user-service";
+import toast from "react-hot-toast";
 
 export default function TakeQuizListPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -27,6 +29,22 @@ export default function TakeQuizListPage() {
     };
 
     fetchQuizzes();
+  }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const u = await getCurrentUser();
+        if (!u) {
+          router.push("/login");
+        }
+      } catch (error) {
+        toast.error("You must be logged in.");
+        router.push("/login");
+      }
+    };
+
+    fetchUser();
   }, []);
 
   return (

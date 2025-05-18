@@ -64,8 +64,7 @@ export const exportQuizAsJson = async (quizId: number): Promise<Blob> => {
     return response.data;
   } catch (error: any) {
     throw new Error(
-      error.response?.data?.message ||
-        "Не успеавме да го експортираме квизот во JSON формат"
+      error.response?.data?.message || "Quiz couldn't be exported"
     );
   }
 };
@@ -84,8 +83,25 @@ export const exportQuizAsPdf = async (quizId: number): Promise<Blob> => {
     return response.data;
   } catch (error: any) {
     throw new Error(
-      error.response?.data?.message ||
-        "Не успеавме да го експортираме квизот во PDF формат"
+      error.response?.data?.message || "Quiz couldn't be exported"
+    );
+  }
+};
+
+export const getResutlsForUserQuizzes = async (): Promise<UserQuizResults[]> => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axiosInstance.get(`/results/user`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "An error occured while fetching results"
     );
   }
 };
