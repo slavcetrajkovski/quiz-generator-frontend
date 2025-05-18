@@ -59,9 +59,7 @@ export const ProfileForm = () => {
     if (!user) return;
 
     try {
-      const currentUser = await getCurrentUser();
-      const updated = await updateUser(currentUser.id, {
-        ...currentUser,
+      const updated = await updateUser({
         name: values.name,
         email: values.email,
       });

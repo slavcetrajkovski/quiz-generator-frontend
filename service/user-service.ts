@@ -19,12 +19,18 @@ export const getCurrentUser = async (): Promise<User> => {
   }
 };
 
-export const updateUser = async (
-  id: number,
-  data: { name: string; email: string }
-): Promise<User> => {
+export const updateUser = async (userRequest: {
+  name: string;
+  email: string;
+}): Promise<User> => {
+  const token = localStorage.getItem("token");
+
   try {
-    const response = await axiosInstance.put<User>(`/user/update/${id}`, data);
+    const response = await axiosInstance.put(`/user/update`, userRequest, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Failed to update user");
