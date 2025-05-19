@@ -83,7 +83,11 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   const q = quiz.questions[current];
 
   if (loading) {
-    return <Spinner />;
+    return (
+      <div className="flex items-center justify-center mt-10">
+        <Spinner />
+      </div>
+    );
   }
 
   if (quizFinished) {
