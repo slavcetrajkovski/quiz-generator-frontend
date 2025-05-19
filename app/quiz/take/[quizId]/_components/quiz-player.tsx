@@ -9,6 +9,7 @@ import QuestionStep from "./question-step";
 import ProgressBar from "./progress-bar";
 import { useRouter } from "next/navigation";
 import { submitQuizResults } from "@/service/quiz-results-service";
+import { Spinner } from "@/components/ui/spinner";
 
 interface QuizPlayerProps {
   quiz: Quiz;
@@ -22,6 +23,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   const [timeLeft, setTimeLeft] = useState(300);
   const [quizFinished, setQuizFinished] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -71,6 +73,7 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
 
     try {
       const result = await submitQuizResults(quiz.id, userAnswers, timeTaken);
+      setLoading(true);
       router.push(`/quiz/results/${result.id}`);
     } catch (error) {
       console.error("Error submitting quiz:", error);
@@ -78,6 +81,10 @@ export default function QuizPlayer({ quiz }: QuizPlayerProps) {
   };
 
   const q = quiz.questions[current];
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   if (quizFinished) {
     return (
